@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Freemasoid/go-practice-rss-aggregator/internal/auth"
 	"github.com/Freemasoid/go-practice-rss-aggregator/internal/database"
 	"github.com/google/uuid"
 )
@@ -32,6 +33,20 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 	})
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("could not create user: %v", err))
+	}
+
+	respondWithJSON(w, 201, databaseUserToUser(user))
+}
+
+func (apiCfg *apiConfig) handleGetUser(w http.ResponseWriter, r *http.Request) {
+	apiKey, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, 403, fmt.Sprintf("auth error: %v", err))
+	}
+
+	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("could not get user: %v", err))
 	}
 
 	respondWithJSON(w, 200, databaseUserToUser(user))
