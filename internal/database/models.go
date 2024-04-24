@@ -19,7 +19,7 @@ type Feed struct {
 	UserID    uuid.UUID
 }
 
-type FeedsFollow struct {
+type FeedFollow struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
